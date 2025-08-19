@@ -25,7 +25,7 @@ A comprehensive Go package for controlling and communicating with NanoVNA (Vecto
 
 ## Installation
 
-`ash
+`bash
 go get github.com/VA7DBI/go-nanovna
 `
 
@@ -153,3 +153,4 @@ MIT License - see LICENSE file for details.
 ## Contributing
 
 Contributions welcome! Please submit issues and pull requests on GitHub.
+
