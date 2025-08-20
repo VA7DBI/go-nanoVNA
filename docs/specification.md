@@ -25,15 +25,15 @@ This package provides a Go API for communicating with and controlling a NanoVNA 
 
 ```mermaid
 flowchart TD
-  A[ListDevices()] --> B(Open())
-  B --> C{Device Connected?}
-  C -- Yes --> D[GetInfo()]
-  D --> E[SetSweepConfig()]
-  E --> F[RunSweep()]
-  F --> G[GetCalibration() / SetCalibration()]
-  G --> H[SaveCalibration() / LoadCalibration()]
-  H --> I[Close()]
-  C -- No --> Z[Error Handling]
+A[ListDevices()] --> B(Open())
+B --> C{Device Connected?}
+C -- Yes --> D[GetInfo()]
+D --> E[SetSweepConfig()]
+E --> F[RunSweep()]
+F --> G[GetCalibration() / SetCalibration()]
+G --> H[SaveCalibration() / LoadCalibration()]
+H --> I[Close()]
+C -- No --> Z[Error Handling]
 ```
 
 ## Public API
