@@ -1,3 +1,5 @@
+// Package nanovna provides a Go API for communicating with and controlling NanoVNA devices over a serial (USB) connection.
+// It enables device discovery, configuration, data acquisition, calibration management, and device information retrieval.
 package nanovna
 
 import (
@@ -11,7 +13,7 @@ import (
 	"github.com/tarm/serial"
 )
 
-// HardwareVariant represents different NanoVNA hardware versions
+// HardwareVariant represents different NanoVNA hardware versions.
 type HardwareVariant int
 
 const (
@@ -26,7 +28,7 @@ const (
 	VariantLiteVNA                 // LiteVNA variant
 )
 
-// String returns the string representation of the hardware variant
+// String returns the string representation of the hardware variant.
 func (hv HardwareVariant) String() string {
 	switch hv {
 	case VariantV1:
@@ -50,7 +52,7 @@ func (hv HardwareVariant) String() string {
 	}
 }
 
-// HardwareInfo contains hardware-specific information and capabilities
+// HardwareInfo contains hardware-specific information and capabilities.
 type HardwareInfo struct {
 	Variant        HardwareVariant
 	FrequencyRange FrequencyRange
@@ -60,13 +62,13 @@ type HardwareInfo struct {
 	Capabilities   HardwareCapabilities
 }
 
-// FrequencyRange defines the frequency range for a hardware variant
+// FrequencyRange defines the frequency range for a hardware variant.
 type FrequencyRange struct {
 	MinHz float64
 	MaxHz float64
 }
 
-// CommandSet defines the command set for different hardware variants
+// CommandSet defines the command set for different hardware variants.
 type CommandSet struct {
 	SweepCommand    string
 	FreqCommand     string
@@ -78,7 +80,7 @@ type CommandSet struct {
 	PromptPattern   string
 }
 
-// HardwareCapabilities defines what each hardware variant can do
+// HardwareCapabilities defines what each hardware variant can do.
 type HardwareCapabilities struct {
 	HasS21           bool
 	HasTimeDomain    bool
@@ -89,6 +91,8 @@ type HardwareCapabilities struct {
 }
 
 // getHardwareInfo returns hardware information for a given variant
+// getHardwareInfo returns hardware information for a given variant.
+// Not exported; used internally.
 func getHardwareInfo(variant HardwareVariant) HardwareInfo {
 	switch variant {
 	case VariantV1:
@@ -270,7 +274,7 @@ func getHardwareInfo(variant HardwareVariant) HardwareInfo {
 	}
 }
 
-// PortConfig holds serial port configuration details for debugging
+// PortConfig holds serial port configuration details for debugging.
 type PortConfig struct {
 	Name        string
 	Baud        int
@@ -280,13 +284,14 @@ type PortConfig struct {
 	StopBits    serial.StopBits
 }
 
-// SerialPort is the interface for serial port operations (exported for debug wrapping)
+// SerialPort is the interface for serial port operations (exported for debug wrapping).
 type SerialPort interface {
 	Write([]byte) (int, error)
 	Read([]byte) (int, error)
 	Close() error
 }
 
+// Device represents a connection to a NanoVNA device.
 type Device struct {
 	Port         string
 	portHandle   SerialPort
@@ -301,17 +306,17 @@ func (d *Device) SetPortHandle(sp SerialPort) {
 	d.portHandle = sp
 }
 
-// GetPortHandle returns the underlying serial port (for debug wrapping)
+// GetPortHandle returns the underlying serial port (for debug wrapping).
 func (d *Device) GetPortHandle() SerialPort {
 	return d.portHandle
 }
 
-// GetPortConfig returns the port configuration details (for debugging)
+// GetPortConfig returns the port configuration details (for debugging).
 func (d *Device) GetPortConfig() *PortConfig {
 	return d.config
 }
 
-// GetPortDetails returns detailed port information as a formatted string
+// GetPortDetails returns detailed port information as a formatted string.
 func (d *Device) GetPortDetails() string {
 	if d.config == nil {
 		return fmt.Sprintf("Port: %s (config not available)", d.Port)
@@ -321,37 +326,37 @@ func (d *Device) GetPortDetails() string {
 		d.config.Size, d.config.Parity, d.config.StopBits)
 }
 
-// GetHardwareVariant returns the detected hardware variant
+// GetHardwareVariant returns the detected hardware variant.
 func (d *Device) GetHardwareVariant() HardwareVariant {
 	return d.variant
 }
 
-// GetHardwareInfo returns the hardware information and capabilities
+// GetHardwareInfo returns the hardware information and capabilities.
 func (d *Device) GetHardwareInfo() HardwareInfo {
 	return d.hardwareInfo
 }
 
-// GetFrequencyRange returns the supported frequency range for this hardware
+// GetFrequencyRange returns the supported frequency range for this hardware.
 func (d *Device) GetFrequencyRange() FrequencyRange {
 	return d.hardwareInfo.FrequencyRange
 }
 
-// GetMaxSweepPoints returns the maximum number of sweep points supported
+// GetMaxSweepPoints returns the maximum number of sweep points supported.
 func (d *Device) GetMaxSweepPoints() int {
 	return d.hardwareInfo.MaxSweepPoints
 }
 
-// GetSupportedPorts returns the supported S-parameter ports
+// GetSupportedPorts returns the supported S-parameter ports.
 func (d *Device) GetSupportedPorts() []string {
 	return d.hardwareInfo.SupportedPorts
 }
 
-// GetCapabilities returns the hardware capabilities
+// GetCapabilities returns the hardware capabilities.
 func (d *Device) GetCapabilities() HardwareCapabilities {
 	return d.hardwareInfo.Capabilities
 }
 
-// IsPortSupported checks if a specific S-parameter port is supported
+// IsPortSupported checks if a specific S-parameter port is supported.
 func (d *Device) IsPortSupported(port string) bool {
 	for _, p := range d.hardwareInfo.SupportedPorts {
 		if p == port {
@@ -361,18 +366,21 @@ func (d *Device) IsPortSupported(port string) bool {
 	return false
 }
 
+// DeviceInfo contains information about the NanoVNA device.
 type DeviceInfo struct {
 	Model     string
 	Firmware  string
 	SerialNum string
 }
 
+// SweepData holds measurement data from a sweep.
 type SweepData struct {
 	Frequencies []float64
 	S11         []complex128
 	S21         []complex128
 }
 
+// CalibrationData holds calibration coefficients and metadata.
 type CalibrationData struct {
 	// TODO: define calibration fields
 }
@@ -394,7 +402,7 @@ func ListDevices() ([]string, error) {
 	return ports, nil
 }
 
-// AutoDetect attempts to find and connect to a NanoVNA device automatically
+// AutoDetect attempts to find and connect to a NanoVNA device automatically.
 func AutoDetect() (*Device, error) {
 	ports, err := ListDevices()
 	if err != nil {
@@ -867,7 +875,7 @@ func (d *Device) DetectVersion() (string, error) {
 	return d.version, nil
 }
 
-// GetVersion returns the detected NanoVNA version
+// GetVersion returns the detected NanoVNA version.
 func (d *Device) GetVersion() string {
 	return d.version
 }
