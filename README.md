@@ -1,4 +1,19 @@
+
 # go-nanovna
+
+<!-- Badges -->
+
+[![Go](https://github.com/VA7DBI/go-nanovna/workflows/Go/badge.svg)](https://github.com/VA7DBI/go-nanovna/actions)
+[![Go Reference](https://pkg.go.dev/badge/github.com/VA7DBI/go-nanovna.svg)](https://pkg.go.dev/github.com/VA7DBI/go-nanovna)
+[![Go Report Card](https://goreportcard.com/badge/github.com/VA7DBI/go-nanovna)](https://goreportcard.com/report/github.com/VA7DBI/go-nanovna)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+[![Codecov](https://codecov.io/gh/VA7DBI/go-nanovna/branch/main/graph/badge.svg)](https://codecov.io/gh/VA7DBI/go-nanovna)
+
+---
+
+**Documentation:** See [docs/specification.md](docs/specification.md) for full API and protocol details, including diagrams and flowcharts.
+
+---
 
 A comprehensive Go package for controlling and communicating with NanoVNA (Vector Network Analyzer) devices.
 
@@ -25,19 +40,18 @@ A comprehensive Go package for controlling and communicating with NanoVNA (Vecto
 
 ## Installation
 
-`ash
+```bash
 go get github.com/VA7DBI/go-nanovna
-`
+```
 
 ## Quick Start
 
-`go
+```go
 package main
 
 import (
     "fmt"
     "log"
-    
     "github.com/VA7DBI/go-nanovna"
 )
 
@@ -48,7 +62,7 @@ func main() {
         log.Fatal("Failed to detect NanoVNA:", err)
     }
     defer device.Close()
-    
+
     // Get hardware information
     info := device.GetHardwareInfo()
     fmt.Printf("Connected to: %s\n", info.Variant.String())
@@ -69,11 +83,11 @@ func main() {
     
     fmt.Printf("Measured %d points\n", len(data.Frequencies))
 }
-`
+```
 
 ## Manual Connection
 
-`go
+```go
 // Connect to specific port
 device, err := nanovna.Open("COM3")
 if err != nil {
@@ -87,11 +101,11 @@ if err != nil {
 }
 
 fmt.Printf("Detected: %s\n", version)
-`
+```
 
 ## Hardware-Aware Programming
 
-`go
+```go
 // Check hardware capabilities
 caps := device.GetCapabilities()
 if caps.HasS21 {
@@ -106,30 +120,66 @@ freqRange := device.GetFrequencyRange()
 if startFreq < freqRange.MinHz {
     log.Fatal("Start frequency too low for this hardware")
 }
-`
+```
+
+## Testing & Coverage
+
+Run all tests:
+
+```sh
+go test ./...
+```
+
+Run with coverage (CLI):
+
+```sh
+go test -cover ./...
+```
+
+Generate a local HTML coverage report:
+
+```sh
+go test -coverprofile=coverage.out ./...
+go tool cover -html=coverage.out
+```
+
+This will open a browser window with a detailed coverage report.
+
+### Codecov badge
+
+The badge above is powered by [Codecov](https://codecov.io/gh/VA7DBI/go-nanovna). To enable it for your fork or private repo:
+
+1. Sign up at [codecov.io](https://codecov.io/) and enable your repository.
+2. (If private) Add your Codecov token as a GitHub secret named `CODECOV_TOKEN`.
+3. Push to main or open a pull request to trigger the workflow.
+
+---
 
 ## API Reference
 
 ### Device Management
+
 - AutoDetect() (*Device, error) - Auto-detect and connect to NanoVNA
 - Open(port string) (*Device, error) - Connect to specific serial port
 - OpenWithVariant(port, variant) - Force specific hardware variant
 - ListDevices() ([]string, error) - List available serial ports
 
 ### Hardware Information
+
 - GetHardwareVariant() HardwareVariant - Get detected hardware type
 - GetHardwareInfo() HardwareInfo - Get complete hardware information
 - GetFrequencyRange() FrequencyRange - Get supported frequency range
 - GetCapabilities() HardwareCapabilities - Get hardware capabilities
 
 ### Measurements
+
 - SetSweepConfig(start, stop, points int) error - Configure sweep parameters
 - RunSweep() (SweepData, error) - Perform measurement sweep
 - GetInfo() (DeviceInfo, error) - Get device information
 
 ### Data Structures
 
-`go
+```go
 type SweepData struct {
     Frequencies []float64      // Frequency points
     S11         []complex128   // S11 measurements
@@ -144,7 +194,7 @@ type HardwareCapabilities struct {
     HasGenerator     bool  // Signal generator
     HasSpectrumMode  bool  // Spectrum analyzer mode
 }
-`
+```
 
 ## License
 
