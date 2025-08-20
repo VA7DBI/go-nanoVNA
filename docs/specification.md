@@ -30,8 +30,8 @@ flowchart TD
   C -- Yes --> D[GetInfo()]
   D --> E[SetSweepConfig()]
   E --> F[RunSweep()]
-  F --> G[GetCalibration()/SetCalibration()]
-  G --> H[SaveCalibration()/LoadCalibration()]
+  F --> G[GetCalibration() / SetCalibration()]
+  G --> H[SaveCalibration() / LoadCalibration()]
   H --> I[Close()]
   C -- No --> Z[Error Handling]
 ```
